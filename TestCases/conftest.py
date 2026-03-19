@@ -3,6 +3,11 @@ from selenium import webdriver
 #
 import pytest
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+
 
 @pytest.fixture()
 def setup(browser):
@@ -27,23 +32,16 @@ def browser(request):
 # #### Generate HTML Report ####
 # 
 # it is a hook for adding environment info to HTML report
-@pytest.hookimpl(tryfirst=True)
-def pytest_configure(config):
-    if hasattr(config,'_metadata'):
-        config._metadata['project Name'] = 'Nop Commerce'
-        config._metadata['Module Name'] = 'Customers'
-        config._metadata['Tester'] = 'Madhavi'
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item,call):
+    outcome=yield
+    report=outcome.get_result()
 
-    @pytest.hookimpl(tryfirst=True)
-    def pytest_metadata(metadata):
-        metadata['Project Name'] = 'Nop Commerce'
+    if report.when == call and report.failed:
+        print("test failed")
 
-# it is hook for delete/modify environment info to HTML report
-# i want to delete 'JAVA HOME' asd 'Plugins' details from report
-# @pytest.mark.optionalhook
-# def pytest_metadata(metadata):
-#     metadata.pop("JAVA HOME",None)
-#     metadata.pop("Plugins",None)
+        driver=item.funcargs['driver']
+        driver.save_screenshot('Screenshot/failure.png')
 
 
 import pytest
@@ -75,3 +73,26 @@ def configure_logging():
 @pytest.fixture(scope="function")
 def logger(configure_logging):
     return configure_logging
+
+@pytest.fixture(scope="function")
+def logger(configure_logging):
+    return configure_logging
+
+@pytest.fixture(scope="function")
+def login():
+    driver=webdriver.Chrome()
+    driver.get("https://admin-demo.nopcommerce.com/")
+
+#enter username
+    element = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located(By.XPATH, '//*[@id="Email"]'))
+    element.send_keys("admin@yourstore.com")
+#enter password
+    driver.find_element(By.ID,"Password").send_keys("admin")
+#click on login
+    driver.find_element(By.XPATH,'//*[@id="main"]/div/div/div/div[2]/div[1]/div/form/div[3]/button').click()
+
+    yield(driver)
+    driver.quit()
+
+
