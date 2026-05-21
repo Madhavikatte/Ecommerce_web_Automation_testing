@@ -44,7 +44,7 @@ def pytest_runtest_makereport(item,call):
         driver.save_screenshot('Screenshot/failure.png')
 
 
-import pytest
+
 import logging
 
 # log generation configuration
@@ -93,6 +93,6 @@ def login():
     driver.find_element(By.XPATH,'//*[@id="main"]/div/div/div/div[2]/div[1]/div/form/div[3]/button').click()
 
     yield(driver)
-    driver.quit()
+    driver.close()
 
 

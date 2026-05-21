@@ -12,15 +12,17 @@ import random
 
 
 class Test_003_Addcustomer:
-    baseurl = ReadConfig.getApplicationurl()
-    Username = ReadConfig.getusername()
-    Password = ReadConfig.getpassword()
+    Username = 'admin@yourstore.com'
+    Password = 'admin'
     # here we created a logger object to call logger class from Customlogger file
     logger = logGen.logger()
 
     def test_login(self, setup):
         self.driver = setup
-        self.driver.get(self.baseurl)
+
+        self.driver.get("https://admin-demo.nopcommerce.com/")
+
+
         self.driver.maximize_window()
         self.lp = Login(self.driver)
         self.lp.setusername(self.Username)
@@ -31,7 +33,7 @@ class Test_003_Addcustomer:
             print('Login Successful')
         else:
             print('login unsuccessful')
-       # self.driver.close()
+        self.driver.close()
 
         # if act_title=="Dashboard / nopCommerce administration":
         #     assert True
