@@ -6,27 +6,34 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options as ChromeOptions
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
+import os
 
 
 
 @pytest.fixture()
 def setup(browser):
     if browser == 'chrome':
-        driver = webdriver.Chrome()
+        options = ChromeOptions()
+        if os.environ.get("CI"):          # Only headless on GitHub Actions
+            options.add_argument("--headless")
+            options.add_argument("--no-sandbox")
+            options.add_argument("--disable-dev-shm-usage")
+            options.add_argument("--window-size=1920,1080")
+        driver = webdriver.Chrome(options=options)
+
     elif browser == 'firefox':
-        driver = webdriver.Firefox()
+        options = FirefoxOptions()
+        if os.environ.get("CI"):          # Only headless on GitHub Actions
+            options.add_argument("--headless")
+        driver = webdriver.Firefox(options=options)
+
     else:
-        driver = webdriver.Chrome()  # Default to Chrome if no browser specified
-    return driver
-
-# Correcting the hook implementation to pytest_addoption
-
-def pytest_addoption(parser):
-    parser.addoption("--browser", action="store", default="chrome", help="Browser to run tests on")
-
-@pytest.fixture()
-def browser(request):
-    return request.config.getoption("--browser")
+        driver = webdriver.Chrome()       # Default fallback
+    driver.implicitly_wait(10)
+    yield driver  # hands driver to the test
+    driver.quit()  # runs after every test automatically
 
 
 # #### Generate HTML Report ####
