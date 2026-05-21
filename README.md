@@ -1,5 +1,5 @@
 # 🛒 nopCommerce Web Automation Testing Framework
-
+![CI](https://github.com/Madhavikatte/Ecommerce_web_Automation_testing/actions/workflows/pytest.yml/badge.svg)
 ![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python)
 ![Pytest](https://img.shields.io/badge/Tested%20with-Pytest-yellow?logo=pytest)
 ![Selenium](https://img.shields.io/badge/Selenium-WebDriver-green?logo=selenium)
